@@ -5,7 +5,7 @@
     <%@taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 </head>
 <body>
-    <sf:form method="post" action="/admin/cua-hang/store" modelAttribute="ch">
+    <sf:form method="post" action="${ action }" modelAttribute="ch">
         <div>
             <label>Mã</label>
             <sf:input path="ma" />

@@ -11,6 +11,9 @@ import tiennh21.sd17321.entities.CuaHang;
 import tiennh21.sd17321.repositories.CuaHangRepository;
 import tiennh21.sd17321.request.CuaHangVM;
 
+import java.util.List;
+import java.util.UUID;
+
 @Controller
 @RequestMapping("admin/cua-hang")
 public class CuaHangController {
@@ -25,7 +28,32 @@ public class CuaHangController {
     public String create(Model model)
     {
         model.addAttribute("ch", vm);
+        model.addAttribute("action", "/admin/cua-hang/store");
+
         return "admin/cua_hang/create";
+    }
+
+    @GetMapping("edit/{id}")
+    public String edit(
+        @PathVariable("id") CuaHang cuaHang,
+        Model model
+    ) {
+        vm.loadFromEntity(cuaHang);
+        model.addAttribute("ch", vm);
+        model.addAttribute("action", "/admin/cua-hang/update/" + cuaHang.getId());
+        return "admin/cua_hang/create";
+    }
+
+    @PostMapping("update/{id}")
+    public String update(
+        @PathVariable("id") CuaHang cuaHang,
+        @Valid CuaHangVM vm,
+        BindingResult result,
+        Model model
+    ) {
+        cuaHang.loadFromVM(vm);
+        this.cuaHangRepo.save(cuaHang);
+        return "redirect:/admin/cua-hang/index";
     }
 
     @PostMapping("store")
@@ -33,14 +61,29 @@ public class CuaHangController {
         @Valid @ModelAttribute("ch") CuaHangVM vm,
         BindingResult result
     ) {
-        CuaHang ch = new CuaHang();
-        ch.setMa( vm.getMa() );
-        ch.setTen( vm.getTen() );
-        ch.setDiaChi( vm.getDiaChi() );
-        ch.setThanhPho( vm.getThanhPho() );
-        ch.setQuocGia( vm.getQuocGia() );
+        if (result.hasErrors()) {
+            return "admin/cua_hang/create";
+        }
 
+        CuaHang ch = new CuaHang();
+        ch.loadFromVM(vm);
         this.cuaHangRepo.save(ch);
-        return "admin/cua_hang/create";
+
+        return "redirect:/admin/cua-hang/index";
+    }
+
+    @GetMapping("index")
+    public String index(Model model)
+    {
+        List<CuaHang> ds = this.cuaHangRepo.findAll();
+        model.addAttribute("data", ds);
+        return "admin/cua_hang/index";
+    }
+
+    @GetMapping("delete/{id}")
+    public String delete(@PathVariable("id") CuaHang cuaHang)
+    {
+        this.cuaHangRepo.delete(cuaHang);
+        return "redirect:/admin/cua-hang/index";
     }
 }

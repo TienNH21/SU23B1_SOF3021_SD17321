@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tiennh21.sd17321.request.CuaHangVM;
 
 import java.util.UUID;
 
@@ -32,4 +33,13 @@ public class CuaHang {
 
     @Column(name="QuocGia")
     private String quocGia;
+
+    public void loadFromVM(CuaHangVM vm)
+    {
+        this.setMa( vm.getMa() );
+        this.setTen( vm.getTen() );
+        this.setThanhPho( vm.getThanhPho() );
+        this.setQuocGia( vm.getQuocGia() );
+        this.setDiaChi( vm.getDiaChi() );
+    }
 }
